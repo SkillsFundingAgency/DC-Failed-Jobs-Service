@@ -64,7 +64,7 @@ namespace ESFA.DC.FailedJob.Service
             };
             ILogger logger = new SeriLogger(applicationLoggerOutputSettings, executionContext);
             IQueueSubscriptionService<JobContextDto> queueSubscriptionService = new QueueSubscriptionService<JobContextDto>(queueConfiguration, serializationService, logger);
-            IJobStatusWebServiceCallService<JobContextDto> failedJobsWebServiceCallService = new FailedJobsWebServiceCallService(auditingPersistenceServiceConfig, queueSubscriptionService, logger);
+            IJobStatusWebServiceCallService<JobContextDto> failedJobsWebServiceCallService = new FailedJobsWebServiceCallService(auditingPersistenceServiceConfig, queueSubscriptionService, serializationService, logger);
 
             failedJobsWebServiceCallService.Subscribe();
 
