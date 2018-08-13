@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.FailedJob.Service.Configuration;
 using ESFA.DC.JobContext;
 using ESFA.DC.JobStatus.Interface;
@@ -12,6 +13,7 @@ using ESFA.DC.Logging.Enums;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Queueing;
 using ESFA.DC.Queueing.Interface;
+using ESFA.DC.Queueing.Interface.Configuration;
 using ESFA.DC.Serialization.Interfaces;
 using ESFA.DC.Serialization.Json;
 using Microsoft.Extensions.Configuration;
@@ -63,12 +65,13 @@ namespace ESFA.DC.FailedJob.Service
                 TaskKey = "Job Fail Status"
             };
             ILogger logger = new SeriLogger(applicationLoggerOutputSettings, executionContext);
-            IQueueSubscriptionService<JobContextDto> queueSubscriptionService = new QueueSubscriptionService<JobContextDto>(queueConfiguration, serializationService, logger);
+            IDateTimeProvider dateTimeProvider = new DateTimeProvider.DateTimeProvider();
+            IQueueSubscriptionService<JobContextDto> queueSubscriptionService = new QueueSubscriptionService<JobContextDto>(queueConfiguration, serializationService, logger, dateTimeProvider);
             IJobStatusWebServiceCallService<JobContextDto> failedJobsWebServiceCallService = new FailedJobsWebServiceCallService(auditingPersistenceServiceConfig, queueSubscriptionService, serializationService, logger);
 
             failedJobsWebServiceCallService.Subscribe();
 
-            logger.LogInfo("Started!");
+            logger.LogInfo($"Started {executionContext.JobId}!");
 
             ManualResetEvent oSignalEvent = new ManualResetEvent(false);
             oSignalEvent.WaitOne();
