@@ -3,9 +3,9 @@ using System.IO;
 using System.Threading;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.FailedJob.Service.Configuration;
-using ESFA.DC.JobContext;
-using ESFA.DC.JobStatus.Interface;
+using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobStatus.WebServiceCall.Service;
+using ESFA.DC.JobStatus.WebServiceCall.Service.Interface;
 using ESFA.DC.Logging;
 using ESFA.DC.Logging.Config;
 using ESFA.DC.Logging.Config.Interfaces;
@@ -66,7 +66,7 @@ namespace ESFA.DC.FailedJob.Service
             };
             ILogger logger = new SeriLogger(applicationLoggerOutputSettings, executionContext);
             IDateTimeProvider dateTimeProvider = new DateTimeProvider.DateTimeProvider();
-            IQueueSubscriptionService<JobContextDto> queueSubscriptionService = new QueueSubscriptionService<JobContextDto>(queueConfiguration, serializationService, logger, dateTimeProvider);
+            IQueueSubscriptionService<JobContextDto> queueSubscriptionService = new QueueSubscriptionService<JobContextDto>(queueConfiguration, serializationService, logger);
             IJobStatusWebServiceCallService<JobContextDto> failedJobsWebServiceCallService = new FailedJobsWebServiceCallService(auditingPersistenceServiceConfig, queueSubscriptionService, serializationService, logger);
 
             failedJobsWebServiceCallService.Subscribe();
